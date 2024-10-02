@@ -16,5 +16,9 @@ class NavigatorService {
     return navigatorKey.currentState!.pushNamed(routeName);
   }
 
+  void pop(){
+    navigatorKey.currentState!.pop();
+  }
+
   // Add other navigation methods as needed
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import '../common/common.dart';
 
 extension DebugPrint on Object? {
   void log() => debugPrint('\x1B[33m${toString()}\x1B[0m');
@@ -15,14 +14,6 @@ extension NullOrEmptyCheck on String? {
 extension SpaceXY on num {
   SizedBox get spaceX => SizedBox(width: toDouble());
   SizedBox get spaceY => SizedBox(height: toDouble());
-}
-
-extension InputLabel on String{
-  Widget get toLabel =>
-      Padding(
-        padding: const EdgeInsets.only(bottom: 5, left: 6),
-        child: Text( this, style: appInputLabel(),),
-      );
 }
 
 extension GetNumber on String {

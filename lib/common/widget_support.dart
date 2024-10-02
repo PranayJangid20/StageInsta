@@ -40,25 +40,3 @@ class DashLineView extends StatelessWidget {
   }
 }
 
-class AppShimmer extends StatelessWidget {
-  final double height;
-  final double width;
-  const AppShimmer({super.key, required this.height, required this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-        baseColor: AppColors.prepAiComponentBG,
-        highlightColor: AppColors.prepAiBlue1,
-        enabled: true,
-        child:Container(
-          width: width,
-          height: height,
-
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: const BorderRadius.all(Radius.circular(8)),
-          ),
-        ),);
-    }
-}

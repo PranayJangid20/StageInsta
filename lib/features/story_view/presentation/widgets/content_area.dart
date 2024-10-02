@@ -1,52 +1,111 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:stage_insta/features/home/domain/Entity/user_story.dart';
+import 'package:stage_insta/features/story_view/presentation/provider/carousel_controller.dart';
+import 'package:stage_insta/utils/helper_extensions.dart';
+import 'package:stage_insta/utils/ui_helper.dart';
+import 'package:svg_flutter/svg_flutter.dart';
 
 class ContentArea extends StatefulWidget {
-  const ContentArea({super.key});
+  const ContentArea({super.key, required this.story});
+
+  final UserStory story;
 
   @override
   State<ContentArea> createState() => _ContentAreaState();
 }
 
 class _ContentAreaState extends State<ContentArea> {
-  double lastPoint = 0.0;
-  double startPoint = 0.0;
-  double updatedPoint = 0.0;
+  int toWatch = -1;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapUp: (point) {
-        Size size = MediaQuery.of(context).size;
-        double pixel = point.globalPosition.dx;
+    if (toWatch == -1) {
+      toWatch = widget.story.watched ?? 0;
+    }
 
-        if (pixel < size.width * 0.5) {
-          print("Previous");
-        } else if (pixel > size.width * 0.5) {
-          print("Next");
-        }
-      },
-      onHorizontalDragStart: (detail) {
-        startPoint = lastPoint = updatedPoint = detail.globalPosition.dy;
-      },
-      onHorizontalDragUpdate: (details) {
-        lastPoint = updatedPoint;
-        updatedPoint = details.globalPosition.dy;
-      },
-      onHorizontalDragEnd: (details) {
-        if (startPoint < updatedPoint) {
-          print("Swipe Left");
-        } else {
-          print("swipe Right");
-        }
-      },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8cG9ydHJhaXR8ZW58MHx8MHx8fDA%3D",
-          width: double.infinity,
-          fit: BoxFit.fill,
-        ),
-      ),
-    );
+    return Consumer<StoryController>(builder: (context, value, _) {
+      bool isFocused = value.ongoingUser.userName == widget.story.userName;
+
+      int noOfStories = widget.story.stories!.length;
+
+      int target =
+          (value.ongoingUser.userName == widget.story.userName ? value.storyIndex : widget.story.watched) ?? 0;
+
+      return Column(
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: SizedBox(
+                child: GestureDetector(
+                  onTapUp: (point) {
+                    Size size = MediaQuery.of(context).size;
+                    double pixel = point.globalPosition.dx;
+
+                    if (pixel < size.width * 0.5) {
+                      if (toWatch != 0) {
+                        toWatch -= 1;
+                      }
+                      else{
+                        value.goToPreviousStory();
+                      }
+                    } else {
+                      value.storyVisited(widget.story.userName??"");
+                      if (toWatch != widget.story.stories!.length - 1) {
+                        toWatch += 1;
+                      }
+                      else{
+                        value.skipToNextStory();
+                      }
+                    }
+                    setState(() {});
+                  },
+                  onTapDown: (details) {
+                    //Hold with timer
+                  },
+                  child: SizedBox(
+                    child: CachedNetworkImage(
+                      imageUrl: widget.story.stories![target.clamp(0, widget.story.stories!.length-1)], // using clamp because toWatch refers to count for another component and here it is picking image
+                      width: double.infinity,
+                      fit: BoxFit.fitWidth,
+                      fadeInDuration: Duration(milliseconds: 0),
+                      fadeInCurve: Curves.linear,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 14),
+            child: Row(
+              children: [
+                widget.story.commenting == true
+                    ? Expanded(
+                        child: TextField(
+                          decoration: InputDecoration(
+                              hintText: "Message",
+                              hintStyle: fsHeadLine7(fontWeight: FontWeight.w500, color: Colors.white),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 14)),
+                        ),
+                      )
+                    : Spacer(),
+                16.spaceX,
+                widget.story.likable == true?SvgPicture.asset("assets/svg/heart.svg", width: 26,):SizedBox.shrink(),
+                8.spaceX,
+                InkWell(
+                    onTap: () {},
+                    child: SvgPicture.asset("assets/svg/send.svg", width: 26,),)
+              ],
+            ),
+          )
+        ],
+      );
+    });
   }
 }
