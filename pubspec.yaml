@@ -47,9 +47,12 @@ dependencies:
   flutter_carousel_slider: ^1.1.0
   provider: ^6.1.2
   svg_flutter: any
+  json_cache: ^3.0.1
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to

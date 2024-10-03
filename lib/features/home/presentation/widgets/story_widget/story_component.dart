@@ -34,7 +34,7 @@ class StoryComponent extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: (story.watched??0) >= story.stories!.length? Border.all(color: Colors.grey, width: 2) : GradientBorder(
+                    border: (story.watched??0) == story.stories!.length? Border.all(color: Colors.grey, width: 2) : GradientBorder(
                       borderGradient: LinearGradient(colors: [
                         Color(0XFFf9ce34),
                         Color(0XFFee2a7b),

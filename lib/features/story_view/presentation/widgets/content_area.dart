@@ -8,9 +8,10 @@ import 'package:stage_insta/utils/ui_helper.dart';
 import 'package:svg_flutter/svg_flutter.dart';
 
 class ContentArea extends StatefulWidget {
-  const ContentArea({super.key, required this.story});
+  const ContentArea({super.key, required this.story, required this.index});
 
   final UserStory story;
+  final int index;
 
   @override
   State<ContentArea> createState() => _ContentAreaState();
@@ -21,17 +22,37 @@ class _ContentAreaState extends State<ContentArea> {
 
   @override
   Widget build(BuildContext context) {
+    // The code might seen redundant, but it also save data locally for the widget
+
     if (toWatch == -1) {
       toWatch = widget.story.watched ?? 0;
     }
 
+
+    // int predictTo = widget.story.stories!.length - (widget.story.watched??0);
+    //
+    // // "value - $predictTo".log();
+    // if(predictTo == 1){
+    //   toWatch = 0;
+    // }
+
+
     return Consumer<StoryController>(builder: (context, value, _) {
       bool isFocused = value.ongoingUser.userName == widget.story.userName;
 
-      int noOfStories = widget.story.stories!.length;
+      if(widget.story.watched == widget.story.stories!.length){
+        toWatch = 0;
+      }
 
+      // if(widget.index < value.userIndex && predictTo == 1){
+      //   toWatch = 0;
+      // }
+
+      // it decide if display local or global index
       int target =
-          (value.ongoingUser.userName == widget.story.userName ? value.storyIndex : widget.story.watched) ?? 0;
+          (isFocused ? value.storyIndex : toWatch) ?? 0;
+
+      "displaying_${target}".log();
 
       return Column(
         children: [
@@ -45,25 +66,21 @@ class _ContentAreaState extends State<ContentArea> {
                     double pixel = point.globalPosition.dx;
 
                     if (pixel < size.width * 0.5) {
-                      if (toWatch != 0) {
-                        toWatch -= 1;
-                      }
-                      else{
-                        value.goToPreviousStory();
-                      }
+                        value.previousStory();
+
                     } else {
-                      value.storyVisited(widget.story.userName??"");
-                      if (toWatch != widget.story.stories!.length - 1) {
-                        toWatch += 1;
-                      }
-                      else{
-                        value.skipToNextStory();
-                      }
+                      value.nextStory();
                     }
-                    setState(() {});
                   },
-                  onTapDown: (details) {
+                  onLongPress: () {
                     //Hold with timer
+                    value.pauseStory();
+                  },
+
+                  onLongPressEnd: (l){
+                    value.resumeStory();
+                  },onLongPressCancel: (){
+                    value.resumeStory();
                   },
                   child: SizedBox(
                     child: CachedNetworkImage(

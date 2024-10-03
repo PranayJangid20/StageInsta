@@ -27,7 +27,7 @@ class UserStory {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['userName'] = this.userName;
     data['userImage'] = this.userImage;
-    data['stoyies'] = this.stories;
+    data['stories'] = this.stories;
     data['watched'] = this.watched;
     data['commneting'] = this.commenting;
     data['likablity'] = this.likable;

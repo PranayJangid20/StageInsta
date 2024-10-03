@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stage_insta/features/home/presentation/cubit/user_story_cubit.dart';
 import 'package:stage_insta/features/home/presentation/ui/HomePage.dart';
 import 'package:stage_insta/features/story_view/presentation/ui/story_page.dart';
+import 'package:stage_insta/service/locator.dart';
 import 'package:stage_insta/service/navigator_service.dart';
 
 import 'features/story_view/presentation/provider/carousel_controller.dart';
@@ -19,12 +20,7 @@ Future<void> main() async {
     statusBarIconBrightness: Brightness.light,
   ));
 
-  getIt = GetIt.instance;
-
-  // Initialize and register SharedPreferences as a singleton for quick read and write process :: Initializing Shared Preferences is asynchronous call.
-  final sharedPreferences = await SharedPreferences.getInstance();
-  getIt.registerSingleton<SharedPreferences>(sharedPreferences);
-  getIt.registerLazySingleton(() => NavigatorService());
+  setupLocator();
 
   runApp(
     MultiProvider(

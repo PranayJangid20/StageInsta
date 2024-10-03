@@ -12,6 +12,8 @@ class UserStoryCubit extends Cubit<UserStoryState> {
   StoryRepositoryImpl _repo = StoryRepositoryImpl();
   List<UserStory> stories = [];
 
+  // Our Models is not implemented with Equitable, and our model is only property for cubit state, this helps "is" to compare old state with new one
+  // Implementing model with Equitable allow "is"(by Equitable package) to compares model properties also
   int i = 0;
 
   getUserStories() async {
@@ -25,10 +27,12 @@ class UserStoryCubit extends Cubit<UserStoryState> {
   updateUserStories(List<UserStory> _stories) {
     // Sorting the list
     _stories.sort((a, b) {
-      int aWatchedAll = a.watched! >= a.stories!.length ? 1 : 0;
-      int bWatchedAll = b.watched! >= b.stories!.length ? 1 : 0;
+      int aWatchedAll = a.watched! == a.stories!.length ? 1 : 0;
+      int bWatchedAll = b.watched! == b.stories!.length ? 1 : 0;
       return aWatchedAll.compareTo(bWatchedAll);
     });
+    stories = _stories;
+    _repo.storeUpdatedStoryCache(stories);
     i++;
     emit(UserStoryLoaded(stories: _stories, i: i));
   }

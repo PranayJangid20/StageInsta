@@ -17,7 +17,9 @@ class NavigatorService {
   }
 
   void pop(){
-    navigatorKey.currentState!.pop();
+    Future.delayed(Duration.zero, () {
+      navigatorKey.currentState!.pop();
+    });
   }
 
   // Add other navigation methods as needed

@@ -3,6 +3,7 @@ import 'package:stage_insta/features/home/presentation/cubit/user_story_cubit.da
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stage_insta/features/home/presentation/widgets/story_widget/story_component.dart';
 import 'package:stage_insta/features/home/presentation/widgets/story_widget/story_component_placeholder.dart';
+import 'package:stage_insta/utils/helper_extensions.dart';
 
 class StoryTrail extends StatefulWidget {
   const StoryTrail({super.key});
@@ -18,19 +19,26 @@ class _StoryTrailState extends State<StoryTrail> {
       height: 120,
       child: BlocBuilder<UserStoryCubit, UserStoryState>(
         builder: (context, state) {
-          return state is UserStoryLoaded? ListView.builder(
-            // shrinkWrap: true,
-            padding: EdgeInsets.only(left: 20),
-            itemCount: state.stories.length,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (_, i) => StoryComponent(story: state.stories[i],),
-          ): ListView.builder(
-            // shrinkWrap: true,
-            padding: EdgeInsets.only(left: 20),
-            itemCount: 4,
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (_, i) => StoryComponentPlaceholder(),
-          );
+          return state is UserStoryLoaded
+              ? ListView.builder(
+                  // shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 20),
+                  itemCount: state.stories.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (_, i) {
+                    "remaining: ${(state.stories[i].stories!.length) - (state.stories[i].watched ?? 0).toInt()}".log();
+                    return StoryComponent(
+                      story: state.stories[i],
+                    );
+                  },
+                )
+              : ListView.builder(
+                  // shrinkWrap: true,
+                  padding: EdgeInsets.only(left: 20),
+                  itemCount: 4,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (_, i) => StoryComponentPlaceholder(),
+                );
         },
       ),
     );
