@@ -30,13 +30,9 @@ jobs:
 
       - name: Install Android SDK
         run: |
-          sudo mkdir -p /usr/local/android-sdk
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget https://dl.google.com/android/repository/commandlinetools-linux-8512546_latest.zip -O android_tools.zip
-          unzip android_tools.zip -d /usr/local/android-sdk/cmdline-tools
-          mv /usr/local/android-sdk/cmdline-tools /usr/local/android-sdk/cmdline-tools/latest
-          yes | sdkmanager --licenses
+          brew install --cask android-sdk
+          brew install --cask android-studio
+          sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "emulator"
 
       - name: Install Android Emulator
