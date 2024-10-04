@@ -17,6 +17,8 @@ class StoryController extends ChangeNotifier {
   int _currentStoryIndex = 0;
   bool _isPaused = false;
 
+  int firstStory = 0;
+
   double _watchPercent = 0.02;
 
   late UserStory ongoingUser;
@@ -31,16 +33,31 @@ class StoryController extends ChangeNotifier {
   double get watchPercentage => _watchPercent;
 
   setStories(List<UserStory> stories, initial) {
-    _stories = stories;
+    _stories = List<UserStory>.from(stories);
+
+    firstStory = _stories.first.watched ?? 0;
+    debugPrint((firstStory == _stories.first.watched).toString());
 
     int index = stories.indexWhere((user) => user.userName == initial);
-    ongoingUser = stories[index];
+
+    _currentUserIndex = index;
+
+    // NOTE: Will set value by .copyWith method, it will make sure no reference is passed
+    ongoingUser = stories[index].copyWith();
+    debugPrint((firstStory == _stories.first.watched).toString());
+
     if ((ongoingUser.watched ?? 0) >= ongoingUser.stories!.length) {
       ongoingUser.watched = 0;
     }
-    _currentStoryIndex = ongoingUser.watched!;
+    debugPrint((firstStory == _stories.first.watched).toString());
 
-    storyVisited(ongoingUser.userName ?? "");
+    _currentStoryIndex = ongoingUser.watched!;
+    debugPrint((firstStory == _stories.first.watched).toString());
+
+    // if (ongoingUser.watched != ongoingUser.stories!.length) {
+    storyVisited(ongoingUser.userName ?? "", _currentStoryIndex);
+    // }
+
     startTimer();
     Future.delayed(Duration.zero, () {
       notifyListeners();
@@ -49,20 +66,19 @@ class StoryController extends ChangeNotifier {
   }
 
   void nextStory() {
-    _currentStoryIndex++;
-
-    storyVisited(ongoingUser.userName ?? "");
-
-    // All read for thia User
-    if (_currentStoryIndex >= ongoingUser.stories!.length) {
+    "$_currentUserIndex  - ${(_stories.length - 1)}".log();
+    if (_currentStoryIndex >= ongoingUser.stories!.length - 1) {
       if (_currentUserIndex < (_stories.length - 1)) {
         _carouselController.nextPage();
       } else {
         cancelTimer();
         nav.pop();
       }
-      // nextUser(_currentUserIndex+1);
     } else {
+      _currentStoryIndex++;
+      if (ongoingUser.watched != ongoingUser.stories!.length) {
+        storyVisited(ongoingUser.userName ?? "", _currentStoryIndex);
+      }
       notifyListeners();
     }
 
@@ -71,8 +87,10 @@ class StoryController extends ChangeNotifier {
 
   void previousStory() {
     if (_currentStoryIndex >= 0) {
-      storyVisited(ongoingUser.userName ?? "");
       _currentStoryIndex--;
+
+      // Story visit dose not required, by this action user will watch already visited stories
+      // Or go to previous user story (for that case we already handled Story visit)
 
       notifyListeners();
     }
@@ -90,21 +108,22 @@ class StoryController extends ChangeNotifier {
     if (slideIndex >= _currentUserIndex) {
       _currentUserIndex = slideIndex;
 
-      int index = _currentUserIndex;
-      if (index < _stories.length) {
+      if (_currentUserIndex < _stories.length) {
         startTimer();
 
         notifyListeners();
 
         Future.delayed(const Duration(milliseconds: 200), () {
-          ongoingUser = _stories[slideIndex];
+          ongoingUser = _stories[slideIndex].copyWith();
           _currentStoryIndex = ongoingUser.watched ?? 0;
 
           if (ongoingUser.watched == ongoingUser.stories!.length) {
             _currentStoryIndex = 0;
           }
 
-          storyVisited(ongoingUser.userName ?? "");
+          if (ongoingUser.watched != ongoingUser.stories!.length) {
+            storyVisited(ongoingUser.userName ?? "", _currentStoryIndex);
+          }
 
           if ((ongoingUser.watched ?? 0) >= ongoingUser.stories!.length) {
             ongoingUser.watched = 0;
@@ -127,17 +146,17 @@ class StoryController extends ChangeNotifier {
       notifyListeners();
 
       Future.delayed(const Duration(milliseconds: 500), () {
-        "///////////////////////".log();
-        "//////DELAY_COMPLETED////////".log();
-        "///////////////////////".log();
-
         _currentUserIndex = slideIndex;
-        ongoingUser = _stories[_currentUserIndex];
+        ongoingUser = _stories[_currentUserIndex].copyWith();
         _currentStoryIndex = ongoingUser.watched ?? 0;
-        if ((ongoingUser.watched ?? 0) >= ongoingUser.stories!.length) {
-          ongoingUser.watched = 0;
-          // "ongoingUser.watched = 0".log();
+
+        if (ongoingUser.watched != ongoingUser.stories!.length) {
+          storyVisited(ongoingUser.userName ?? "", _currentStoryIndex);
         }
+        // if ((ongoingUser.watched ?? 0) >= ongoingUser.stories!.length) {
+        //   ongoingUser.watched = 0;
+        //   // "ongoingUser.watched = 0".log();
+        // }
 
         "on previous : prevStory i - ${_currentStoryIndex}".log();
         notifyListeners();
@@ -145,32 +164,36 @@ class StoryController extends ChangeNotifier {
     }
   }
 
-  void storyVisited(String userName) {
+  void storyVisited(String userName, int forIndex) {
     UserStory story = _stories.where((user) => user.userName == userName).first;
     int currentWatch = story.watched ?? 0;
 
-    if (story.watched == story.stories!.length) {
+    "For ${(story.watched ?? 0)} - ${forIndex} == ${!((story.watched ?? 0) > forIndex)}".log();
+    if (story.watched == story.stories!.length || (story.watched ?? 0) > forIndex) {
       return;
     }
 
+    "StoryVisit Update : $userName".log();
     story.watched = currentWatch + 1;
 
     story.watched!.clamp(0, story.stories!.length);
 
-    int index = _stories.indexWhere((test) => test.userName == userName);
-    _stories[index] = story;
+    // -----------------------------------------------------------------------
+    // int index = _stories.indexWhere((test) => test.userName == userName);
+    _stories[_currentUserIndex] = story;
+    // -----------------------------------------------------------------------
 
-    if (ongoingUser.watched != ongoingUser.stories!.length + 1) {
-      ongoingUser.watched = currentWatch + 1;
-      ongoingUser.watched!.clamp(0, ongoingUser.stories!.length);
-    }
+    // if (ongoingUser.watched != ongoingUser.stories!.length + 1) {
+    //   ongoingUser.watched = currentWatch + 1;
+    //   ongoingUser.watched!.clamp(0, ongoingUser.stories!.length);
+    // }
 
     Future.delayed(
       Duration.zero,
       () => notifyListeners(),
     );
 
-    "${story.stories!.length} - ${story.watched}".log();
+    // "${story.stories!.length} - ${story.watched}".log();
   }
 
   // Start the story timer
@@ -188,6 +211,8 @@ class StoryController extends ChangeNotifier {
     });
     _storyTimer = Timer.periodic(Duration(milliseconds: 100), (t) {
       _watchPercent += 0.02;
+
+      // debugPrint((firstStory == _stories.first.watched).toString());
 
       // "User : ${ongoingUser.userName} - Story : ${_currentStoryIndex}".log();
       notifyListeners();

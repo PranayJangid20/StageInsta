@@ -52,7 +52,7 @@ class _ContentAreaState extends State<ContentArea> {
       int target =
           (isFocused ? value.storyIndex : toWatch) ?? 0;
 
-      "displaying_${target}".log();
+      // "displaying_${target}".log();
 
       return Column(
         children: [

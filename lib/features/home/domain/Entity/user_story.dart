@@ -23,6 +23,25 @@ class UserStory {
     likable = json['likablity'];
   }
 
+  // Deep copy method
+  UserStory copyWith({
+    String? userName,
+    String? userImage,
+    List<String>? stories,
+    int? watched,
+    bool? commenting,
+    bool? likable,
+  }) {
+    return UserStory(
+      userName: userName ?? this.userName,
+      userImage: userImage ?? this.userImage,
+      stories: stories != null ? List<String>.from(stories) : this.stories != null ? List<String>.from(this.stories!) : null,
+      watched: watched ?? this.watched,
+      commenting: commenting ?? this.commenting,
+      likable: likable ?? this.likable,
+    );
+  }
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['userName'] = this.userName;
