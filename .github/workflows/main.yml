@@ -28,10 +28,18 @@ jobs:
       - name: Install Flutter dependencies
         run: flutter pub get
 
+      - name: Install Homebrew
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
+          eval "$(/opt/homebrew/bin/brew shellenv)"
+
+          - name: Install Java 8
+            run: brew tap homebrew/cask-versions && brew install --cask temurin8
+
       - name: Install Android SDK
         run: |
           brew install --cask android-sdk
-          brew install --cask android-studio
           sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "emulator"
 
@@ -51,6 +59,7 @@ jobs:
         run: |
           adb wait-for-device
           flutter devices
+
 
       - name: Run integration tests on Android
         run: flutter test integration_test -d emulator-5554
