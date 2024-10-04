@@ -23,15 +23,34 @@ jobs:
         with:
           channel: 'stable'
           architecture: x64
+
+      - name: Install Android SDK
+        run: sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3" "emulator"
+
+      - name: Install Android Emulator
+        run: sdkmanager "system-images;android-30;google_apis;x86_64"
+
+      - name: Create AVD
+        run: echo "no" | avdmanager create avd -n test -k "system-images;android-30;google_apis;x86_64" --device "pixel"
+
+      - name: Start emulator
+        run: |
+          nohup emulator -avd test -no-audio -no-window -no-snapshot &
+          adb wait-for-device
+          adb shell input keyevent 82
+
+      - name: Wait for emulator to boot
+        run: |
+          adb wait-for-device
+          flutter devices
+
+      - name: Run integration tests on Android
+        run: flutter test integration_test -d emulator-5554
+
+      - name: Stop emulator
+        run: adb emu kill
+
       - run: flutter build apk --release
-      #      - run: |
-      #          flutter build ios --no-codesign
-      #          cd build/ios/iphoneos
-      #          mkdir Payload
-      #          cd Payload
-      #          ln -s ../Runner.app
-      #          cd ..
-      #          zip -r app.ipa Payload
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
