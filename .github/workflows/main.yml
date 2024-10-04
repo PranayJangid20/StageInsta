@@ -19,7 +19,7 @@ jobs:
       PATH: $ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH
 
     steps:
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v2
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
