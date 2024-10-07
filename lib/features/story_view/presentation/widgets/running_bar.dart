@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stage_insta/features/story_view/presentation/provider/carousel_controller.dart';
+import 'package:stage_insta/features/story_view/presentation/provider/story_controller.dart';
 
 class RunningBar extends StatefulWidget {
   const RunningBar({super.key});

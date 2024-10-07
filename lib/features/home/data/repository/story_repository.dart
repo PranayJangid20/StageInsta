@@ -1,11 +1,11 @@
 import 'package:stage_insta/features/home/data/source/dummy_storage.dart';
 import 'package:stage_insta/features/home/domain/Entity/user_story.dart';
+import 'package:stage_insta/features/home/domain/data_source/story_data_source.dart';
 import 'package:stage_insta/features/home/domain/repository/story_repository.dart';
 
 class StoryRepositoryImpl implements StoryRepository {
-  // we can pass data source local or network here
 
-  final DummyStorage _storage = DummyStorage();
+  final StoryDataSource _storage = DummyStorage();
 
   @override
   Future<List<UserStory>> fetchUserStory() async {
@@ -17,13 +17,14 @@ class StoryRepositoryImpl implements StoryRepository {
   }
 
   @override
-  void storeUpdatedStoryCache(List<UserStory> data) {
-    var _data = [];
+  void storeUpdatedStory(List<UserStory> data) {
+    List<Map<String, dynamic>> _data = [];
 
     for (var e in data) {
       _data.add(e.toJson());
     }
 
-    _storage.storeCache(_data);
+    _storage.storeUserStories(_data);
+    return;
   }
 }

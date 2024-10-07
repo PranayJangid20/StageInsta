@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stage_insta/features/home/domain/Entity/user_story.dart';
-import 'package:stage_insta/features/story_view/presentation/provider/carousel_controller.dart';
+import 'package:stage_insta/features/story_view/presentation/provider/story_controller.dart';
 import 'package:stage_insta/features/story_view/presentation/widgets/running_bar.dart';
 import 'package:stage_insta/utils/helper_extensions.dart';
 import 'package:stage_insta/utils/ui_helper.dart';
 
-class StoryControl extends StatefulWidget {
-  const StoryControl({super.key, required this.user, required this.index});
+class StoryOverlay extends StatefulWidget {
+  const StoryOverlay({super.key, required this.user, required this.index});
   final UserStory user;
   final int index;
 
   @override
-  State<StoryControl> createState() => _StoryControlState();
+  State<StoryOverlay> createState() => _StoryOverlayState();
 }
 
-class _StoryControlState extends State<StoryControl> {
+class _StoryOverlayState extends State<StoryOverlay> {
   int toWatch = -1;
   @override
   Widget build(BuildContext context) {
@@ -33,12 +33,16 @@ class _StoryControlState extends State<StoryControl> {
         toWatch = 0;
       }
 
+      if(value.ongoingUser.userName == widget.user.userName){
+        toWatch = value.storyIndex;
+      }
+
+      if(value.userIndex>widget.index && widget.user.watched == widget.user.stories!.length){
+        toWatch = (widget.user.watched??1) -1;
+      }
+
+
       int noOfStories = widget.user.stories!.length;
-
-
-      // if(widget.index < value.userIndex && predictTo == 1){
-      //   toWatch = 0;
-      // }
 
       int target = (isFocused ? value.storyIndex : toWatch) ?? 0;
 

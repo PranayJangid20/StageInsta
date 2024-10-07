@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:stage_insta/common/common.dart';
-import 'package:stage_insta/common/widget_support.dart';
 import 'package:stage_insta/utils/helper_extensions.dart';
 
 class StoryComponentPlaceholder extends StatelessWidget {
-  StoryComponentPlaceholder({super.key});
+  const StoryComponentPlaceholder({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +15,11 @@ class StoryComponentPlaceholder extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(6),
-              child: CircleSkeleton(size: 76,),
+              padding: const EdgeInsets.all(6),
+              child: const CircleSkeleton(size: 76,),
             ),
             8.spaceY,
-            Skeleton(height: 14,width: 88,)
+            const Skeleton(height: 14,width: 88,)
           ],
         ),
       ),

@@ -4,13 +4,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stage_insta/features/home/domain/services/story_services.dart';
 import 'package:stage_insta/features/home/presentation/cubit/user_story_cubit.dart';
 import 'package:stage_insta/features/home/presentation/ui/HomePage.dart';
 import 'package:stage_insta/features/story_view/presentation/ui/story_page.dart';
 import 'package:stage_insta/service/locator.dart';
 import 'package:stage_insta/service/navigator_service.dart';
 
-import 'features/story_view/presentation/provider/carousel_controller.dart';
+import 'features/home/data/repository/story_repository.dart';
+import 'features/story_view/presentation/provider/story_controller.dart';
 
 late final GetIt getIt;
 Future<void> main() async {
@@ -25,7 +27,7 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        BlocProvider<UserStoryCubit>(create: (_) => UserStoryCubit()),
+        BlocProvider<UserStoryCubit>(create: (_) => UserStoryCubit(GetIt.instance<StoryService>(), GetIt.I<StoryRepositoryImpl>())),
         ChangeNotifierProvider(
           create: (_) => StoryController(),
         ),

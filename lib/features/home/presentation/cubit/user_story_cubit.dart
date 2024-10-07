@@ -2,18 +2,22 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:stage_insta/features/home/data/repository/story_repository.dart';
 import 'package:stage_insta/features/home/domain/Entity/user_story.dart';
+import 'package:stage_insta/features/home/domain/repository/story_repository.dart';
+import 'package:stage_insta/features/home/domain/services/story_services.dart';
 
 part 'user_story_state.dart';
 
 class UserStoryCubit extends Cubit<UserStoryState> {
-  UserStoryCubit() : super(UserStoryInitial());
+  UserStoryCubit(this._storyService, this._repo) : super(UserStoryInitial());
 
 
-  StoryRepositoryImpl _repo = StoryRepositoryImpl();
+  final StoryRepository _repo;
+  final StoryService _storyService;
+
   List<UserStory> stories = [];
 
-  // Our Models is not implemented with Equitable, and our model is only property for cubit state, this helps "is" to compare old state with new one
-  // Implementing model with Equitable allow "is"(by Equitable package) to compares model properties also
+  // Our Models is not use with Equitable, and our model is only property for cubit state, this helps "is" to compare old state with new one
+  // Using model with Equitable allow "is"(by Equitable package) to compares model properties also
   int i = 0;
 
   getUserStories() async {
@@ -24,16 +28,11 @@ class UserStoryCubit extends Cubit<UserStoryState> {
     emit(UserStoryLoaded(stories: _stories, i: i));
   }
 
-  updateUserStories(List<UserStory> _stories) {
+  updateUserStories(List<UserStory> data) {
     // Sorting the list
-    _stories.sort((a, b) {
-      int aWatchedAll = a.watched! == a.stories!.length ? 1 : 0;
-      int bWatchedAll = b.watched! == b.stories!.length ? 1 : 0;
-      return aWatchedAll.compareTo(bWatchedAll);
-    });
-    stories = _stories;
-    _repo.storeUpdatedStoryCache(stories);
+    stories = _storyService.sortStories(data);
+    _repo.storeUpdatedStory(stories);
     i++;
-    emit(UserStoryLoaded(stories: _stories, i: i));
+    emit(UserStoryLoaded(stories: stories, i: i));
   }
 }

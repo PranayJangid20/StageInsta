@@ -20,7 +20,6 @@ class AppColors {
   static const Color gray400 = Color(0XFF4C4C4A);
   static const Color gray500 = Color(0XFF808080);
 
-  // 4C4C4C
   static const Color gray700 = Color(0XFF4C4C4C);
   
   static const Color gray800 = Color(0XFF333333);
@@ -37,7 +36,6 @@ class AppColors {
   static const Color yellowShade4 = Color(0XFFCCA300);
   static const Color yellowShade2 = Color(0XFFF5CE31);
   static const Color yellowShade1 = Color(0XFFF5D349);
-  // static const Color yellow200 = Color(0XFF735E0B);
   static const Color yellow300 = Color(0XFF735E0B);
   static const Color yellow400 = Color(0XFF4C3D00);
   static const Color yellow600 = Color(0XFF997A00);
@@ -50,8 +48,6 @@ class AppColors {
   static const Color purple1 = Color(0XFF220066);
   static const Color purple7 = Color(0XFFF7E5FF);
   static const Color blue1 = Color(0XFF330099);
-  static const Color prepAiBlue1 = Color(0XFF1D4188);
-  static const Color prepAiComponentBG = Color(0XFF303132);
 
   static const Color green600 = Color(0XFF039855);
 
@@ -60,10 +56,6 @@ class AppColors {
   static const List<Color> purpleBlue = [Color(0XFFCC148E), Color(0XFF1414CC)];
   static const List<Color> darkPurple = [Color(0XFF660044), Color(0XFFCC0088)];
   static const List<Color> darkGreen = [Color(0XFF003400), Color(0XFF008000)];
-  static Color shadowColor =Color(0XFF999999);
-  static const Color buttonEnabeleColor = Color(0XFFF5CE31);
-  static const Color buttonDisabeleColor = Colors.grey;
-  static const Color buttonTextColor = Colors.white;
   static  Color shimmerBaseColor = Colors.grey.shade300;
   static  Color shimmerHighlightColor= Colors.grey.shade100;
 

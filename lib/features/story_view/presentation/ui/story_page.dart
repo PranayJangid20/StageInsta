@@ -6,8 +6,8 @@ import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 import 'package:stage_insta/features/home/domain/Entity/user_story.dart';
 import 'package:stage_insta/features/home/presentation/cubit/user_story_cubit.dart';
-import 'package:stage_insta/features/story_view/presentation/provider/carousel_controller.dart';
-import 'package:stage_insta/features/story_view/presentation/widgets/story_content.dart';
+import 'package:stage_insta/features/story_view/presentation/provider/story_controller.dart';
+import 'package:stage_insta/features/story_view/presentation/widgets/story_ground.dart';
 import 'package:stage_insta/service/navigator_service.dart';
 import 'package:stage_insta/utils/helper_extensions.dart';
 
@@ -96,7 +96,7 @@ class _StoryPageState extends State<StoryPage> {
                       children: value.stories
                           .asMap()
                           .entries
-                          .map((entry) => StoryContent(
+                          .map((entry) => StoryGround(
                                 story: entry.value,
                                 index: entry.key,
                               ))

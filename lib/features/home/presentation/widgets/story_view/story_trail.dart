@@ -26,7 +26,7 @@ class _StoryTrailState extends State<StoryTrail> {
                   itemCount: state.stories.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (_, i) {
-                    "remaining: ${(state.stories[i].stories!.length) - (state.stories[i].watched ?? 0).toInt()}".log();
+                    // "remaining: ${(state.stories[i].stories!.length) - (state.stories[i].watched ?? 0).toInt()}".log();
                     return StoryComponent(
                       story: state.stories[i],
                     );

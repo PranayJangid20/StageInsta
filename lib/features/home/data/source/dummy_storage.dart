@@ -1,8 +1,14 @@
 import 'package:json_cache/json_cache.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stage_insta/common/app_constants.dart';
+import 'package:stage_insta/features/home/domain/data_source/story_data_source.dart';
+import 'package:stage_insta/features/home/domain/services/cache_service.dart';
 import 'package:stage_insta/utils/helper_extensions.dart';
 
-class DummyStorage {
+class DummyStorage implements StoryDataSource {
+
+  final CacheService cacheService = CacheService();
+
   final List _data = [
     {
       "userName": "Anna",
@@ -57,6 +63,7 @@ class DummyStorage {
     }
   ];
 
+  @override
   Future<List?> loadUserStories() async {
     final SharedPreferences preferences = await SharedPreferences.getInstance();
 
@@ -82,33 +89,30 @@ class DummyStorage {
     return data;
   }
 
+  //Note: Cache things can be in separate class, following "SRP"
   Future<List?> loadCache() async {
-    String apiData = "apiData";
-    final SharedPreferences preferences = await SharedPreferences.getInstance();
-    final JsonCacheMem jsonCache = JsonCacheMem(JsonCacheSharedPreferences(preferences));
-    bool available = await jsonCache.contains(apiData);
-    if (!available) {
+    var data = await cacheService.loadCache(AppConstant.StoryCacheKey);
+    if (data == null) {
+
       "Cache Not Available".log();
       return null;
+
     } else {
-      Map? data = await jsonCache.value(apiData);
-      if (data == null) {
-        return null;
-      }
 
       "Cache Available".log();
       return data["data"];
+
     }
   }
 
-  void storeCache(List data) async {
-    String apiData = "apiData";
-    final SharedPreferences preferences = await SharedPreferences.getInstance();
-    final JsonCacheMem jsonCache = JsonCacheMem(JsonCacheSharedPreferences(preferences));
+  @override
+  Future<void> storeUserStories(List<Map<String, dynamic>> data) async {
+    await cacheService.storeCache(AppConstant.StoryCacheKey, {"data": data});
 
-    /// Saving profile and preferences data.
-    jsonCache.refresh(apiData, {"data": data}).onError((e, s) {
-      e.toString().log();
-    });
   }
+
 }
+
+// Note: Same can be
+// class LocalStorage implements StoryDataSource
+// class NetworkStorage implements StoryDataSource
