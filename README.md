@@ -1,6 +1,6 @@
 # Instagram Story Feature in Flutter
 
-This project implements a story feature similar to Instagram's stories in a Flutter application. It allows users to view and interact with stories, incorporating various functionalities such as navigation, caching, and state management using the BLoC pattern.
+This project implements a story feature similar to Instagram's stories in a Flutter application. It allows users to view and interact with stories, incorporating various functionalities such as navigation, caching, and state management using the Cubit.
 
 ## Features
 
@@ -8,7 +8,7 @@ This project implements a story feature similar to Instagram's stories in a Flut
 - **Timer-based Navigation**: Automatically navigates to the next story after a specified duration.
 - **Caching**: Stories are cached for offline viewing using `shared_preferences`.
 - **Dynamic Updates**: Updates story viewing status in real-time.
-- **Provider & BLoC Pattern**: Utilizes Provider and BLoC for state management and business logic separation.
+- **Provider & Cubit**: Utilizes Provider and Cubit for state management and business logic separation.
 
 ## Architecture
 
@@ -20,13 +20,9 @@ The application follows a clean architecture pattern, organizing code into layer
 
 ### Design Choices
 
-- **BLoC Pattern**: Used to separate the UI from business logic, making the codebase easier to maintain and test.
+- **Cubit**: Used to separate the UI from business logic, making the codebase easier to maintain and test.
 - **Provider**: Implemented state management for story controller, ensuring components can react to changes efficiently.
 - **Caching**: Utilized `shared_preferences` for local storage of stories to improve performance and user experience, allowing offline access to previously viewed stories.
-
-### Performance and Scalability
-
-- **Efficient State Management**: Only the necessary components are rebuilt when the state changes, enhancing the application's responsiveness.
 
 ## SOLID Principles Utilization
 
